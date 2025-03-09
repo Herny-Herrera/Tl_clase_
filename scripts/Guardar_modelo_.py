@@ -1,24 +1,10 @@
-import tensorflow as tf
-import numpy as np
+from tensorflow.keras.models import load_model
+import os
 
-def guardar_modelo(model, filename):
-    """Guarda el modelo entrenado en un archivo .h5"""
-    model.save(filename)
-    print(f"Modelo guardado en {filename}")
+model_dir = "models/"
+model_path = os.path.join(model_dir, "alexnet_cifar10.h5")
 
-def cargar_modelo(filename):
-    """Carga un modelo guardado"""
-    model = tf.keras.models.load_model(filename)
-    print(f"Modelo cargado desde {filename}")
-    return model
-
-def guardar_historial(history, filename):
-    """Guarda el historial de entrenamiento"""
-    np.save(filename, history.history)
-    print(f"Historial guardado en {filename}")
-
-def cargar_historial(filename):
-    """Carga el historial de entrenamiento"""
-    history = np.load(filename, allow_pickle=True).item()
-    print(f"Historial cargado desde {filename}")
-    return history
+# Cargar modelo entrenado
+model = load_model(model_path)
+model.save(os.path.join(model_dir, "alexnet_cifar10_saved.h5"))
+print("Modelo guardado exitosamente.")

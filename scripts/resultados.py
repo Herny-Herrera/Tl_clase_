@@ -1,25 +1,36 @@
-import tensorflow as tf
 import matplotlib.pyplot as plt
-import numpy as np
-import guardados  # Importamos funciones para cargar el modelo y el historial
+import json
+import os
 
-# Cargar modelo entrenado
-model = guardados.cargar_modelo("alexnet_cifar10.h5")
+# Cargar historial de entrenamiento
+results_path = "results/"
+history_path = os.path.join(results_path, "history.json")
 
-# Cargar datos de prueba
-(_, _), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
-x_test = x_test / 255.0  # Normalizar imágenes
+if os.path.exists(history_path):
+    with open(history_path, "r") as f:
+        history = json.load(f)
 
-# Evaluar el modelo
-test_loss, test_acc = model.evaluate(x_test, y_test)
-print(f"Precisión en test: {test_acc:.4f}")
+    # Graficar la pérdida y la precisión
+    plt.figure(figsize=(12, 4))
 
-# Graficar historial de entrenamiento
-history = guardados.cargar_historial("historial.npy")
+    # Pérdida
+    plt.subplot(1, 2, 1)
+    plt.plot(history['loss'], label='Train Loss')
+    plt.plot(history['val_loss'], label='Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.title('Evolución de la Pérdida')
 
-plt.plot(history['accuracy'], label='Precisión entrenamiento')
-plt.plot(history['val_accuracy'], label='Precisión validación')
-plt.xlabel('Épocas')
-plt.ylabel('Precisión')
-plt.legend()
-plt.show()
+    # Precisión
+    plt.subplot(1, 2, 2)
+    plt.plot(history['accuracy'], label='Train Accuracy')
+    plt.plot(history['val_accuracy'], label='Validation Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.title('Evolución de la Precisión')
+
+    plt.show()
+else:
+    print("No se encontró historial de entrenamiento.")
